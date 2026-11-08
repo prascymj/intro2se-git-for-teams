@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Git for Teams</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#061C90;--sky:#1CA4E1;--ink:#1a1d24;--muted:#5a6170;--line:#cfd5df;--soft:#f3f5f8;--bad:#a4161a;--badbg:#fdecec;--good:#1b6b3a;--goodbg:#e8f4ec;--bg:#ffffff}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:"Sarabun",system-ui,sans-serif;color:var(--ink);background:var(--bg);font-size:17px;line-height:1.6}
+code,pre,.mono{font-family:"JetBrains Mono",ui-monospace,Menlo,monospace}
+.wrap{max-width:960px;margin:0 auto;padding:0 16px}
+header.top{border-bottom:2px solid var(--navy);padding:28px 0 20px}
+.kicker{font-size:14px;font-weight:600;color:var(--navy);letter-spacing:.04em;text-transform:uppercase}
+h1{font-size:34px;line-height:1.2;color:var(--navy);margin:6px 0 10px}
+.lead{font-size:19px;color:var(--muted);max-width:760px}
+nav.toc{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+nav.toc a{font-size:14px;border:1px solid var(--line);border-radius:3px;padding:3px 10px;color:var(--navy);text-decoration:none}
+nav.toc a:hover{border-color:var(--navy)}
+section{padding:34px 0 8px}
+h2{font-size:25px;color:var(--navy);margin-bottom:10px}
+h2 .n{font-family:"JetBrains Mono",monospace;font-size:16px;color:var(--sky);margin-right:8px}
+h3{font-size:19px;margin:18px 0 6px}
+p{margin:8px 0}
+ul,ol{margin:8px 0 8px 22px}
+li{margin:4px 0}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:14px 0}
+.grid2>*{min-width:0}.box{overflow-x:auto}
+.box{border:1px solid var(--line);border-radius:3px;padding:14px 16px;background:#fff}
+.box.bad{border-color:#e3a5a7;background:var(--badbg)}
+.box.good{border-color:#9cc9ab;background:var(--goodbg)}
+.tag{display:inline-block;font-size:13px;font-weight:700;border:1px solid currentColor;border-radius:3px;padding:0 8px;margin-bottom:8px}
+.bad .tag{color:var(--bad)}.good .tag{color:var(--good)}
+.tree{font-family:"JetBrains Mono",monospace;font-size:14px;line-height:1.65;white-space:pre;overflow-x:auto}
+.tree .c{color:var(--muted)}
+.tree .x{color:var(--bad)}
+figure{margin:16px 0;border:1px solid var(--line);border-radius:3px;padding:14px;background:#fff}
+figure svg{width:100%;height:auto;display:block}
+figcaption{font-size:14px;color:var(--muted);margin-top:8px}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:15px}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--soft)}
+pre{background:#0f1730;color:#e8ecf6;border-radius:3px;padding:14px 16px;font-size:14px;overflow-x:auto;margin:10px 0;line-height:1.55}
+pre .cm{color:#8fa0c9}
+.note{border:1px solid var(--sky);border-radius:3px;padding:12px 14px;margin:14px 0;background:#eef8fd}
+.check li{list-style:none;margin-left:-22px;padding-left:28px;position:relative}
+.check li::before{content:"";position:absolute;left:4px;top:7px;width:13px;height:13px;border:1.5px solid var(--navy);border-radius:2px}
+footer{border-top:1px solid var(--line);margin-top:40px;padding:18px 0 40px;font-size:14px;color:var(--muted)}
+
+.rv-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0}
+.rv-bar select,.rv-bar button{font:inherit;font-size:15px;border:1px solid var(--line);border-radius:3px;padding:5px 10px;background:#fff;color:var(--ink)}
+.rv-bar select{flex:1 1 280px}
+.rv-bar button{cursor:pointer}
+.ov{font-size:13.5px}.ov th,.ov td{padding:5px 6px;text-align:center}.ov td.l,.ov th.l{text-align:left}
+.ov tr.go{cursor:pointer}.ov tr.go:hover td{background:#eef3fb}
+.ov-wrap{overflow-x:auto}
+.s-ok{color:var(--good);font-weight:700}.s-pt{color:#8a5a00;font-weight:700}.s-no{color:var(--bad);font-weight:700}
+.card{border:1px solid var(--line);border-radius:3px;padding:16px;margin:14px 0;background:#fff}
+.card h3{margin:0 0 4px;color:var(--navy)}
+.card .meta{font-size:14px;color:var(--muted);word-break:break-all}
+.card table{font-size:15px}
+.card ol{margin-top:6px}
+.card .gh{border-top:1px solid var(--line);margin-top:10px;padding-top:8px}
+.hidden{display:none}
+@media print{.rv-bar{display:none}.card{break-inside:avoid}.hidden{display:block}}
+@media (max-width:720px){figure{overflow-x:auto}figure svg{min-width:660px}body{font-size:16px}h1{font-size:27px}.grid2{grid-template-columns:1fr}h2{font-size:22px}}
+@media print{nav.toc{display:none}section{break-inside:avoid-page}pre{background:#f3f5f8;color:#111}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <div class="kicker">Intro2SE 15031001, Semester 1/2569</div>
+  <h1>Git for Teams: one shared source of truth</h1>
+  <p class="lead">Git is not a cloud folder for uploading files. It is the tool software teams use to share the current version of their work, keep every past version, and show who did what. This page explains why, shows how a real project repository is organised, and gives you steps to fix your repo.</p>
+  <nav class="toc">
+    <a href="#problem">1. The problem</a><a href="#why">2. Why Git</a><a href="#flow">3. How sharing works</a><a href="#history">4. Versions = commits</a><a href="#branches">5. Branches</a><a href="#structure">6. Repo structure</a><a href="#commits">7. Good commits</a><a href="#fix">8. Fix your repo</a><a href="#checklist">9. Checklist</a><a href="#review">10. Your team review</a>
+  </nav>
+</div></header>
+
+<main class="wrap">
+
+<section id="problem">
+  <h2><span class="n">01</span>The problem we see in many repos</h2>
+  <p>Many team repositories look like a shared drive: every new version is uploaded as a new file, and the version number is written into the file name. Git already does this job for you, so these copies only make the repo harder to use.</p>
+  <div class="grid2">
+    <div class="box bad"><span class="tag">Using Git like a file drive</span>
+<div class="tree">repo/
+  M1-Charter ver1.0.pdf      <span class="x">copy</span>
+  M1-Charter ver2.0.pdf      <span class="x">copy</span>
+  M2_SRS_ver1.0.pdf          <span class="x">copy</span>
+  M2_SRS_ver2.0.pdf          <span class="x">copy</span>
+  Team(Prototype).pdf
+  index_ver1.0.html          <span class="x">which one runs?</span>
+  index_ver1.0.1.html
+  script_ver1.0.js
+  app_ver1.0.1.js
+  style_ver1.0.css
+  style_ver1.0.1.css
+  <span class="c">no README, no folders</span>
+  <span class="c">7 commits, all "Add files via upload"</span></div>
+    </div>
+    <div class="box good"><span class="tag">Using Git as designed</span>
+<div class="tree">repo/
+  README.md                  <span class="c">what, who, how to open</span>
+  docs/
+    M1-team-charter.pdf
+    M2-srs.pdf
+    design/  diagrams
+    final-report.md
+    ai-use-statement.md
+  prototype/
+    index.html               <span class="c">one entry point</span>
+    css/style.css
+    js/app.js
+  slides/demo-slides.pdf
+  <span class="c">one file per document, latest version only</span>
+  <span class="c">older versions live in the commit history</span></div>
+    </div>
+  </div>
+  <p><b>What goes wrong with the left side:</b> nobody can tell which file is current; a teammate may edit <code>style_ver1.0.css</code> while the page loads <code>style_ver1.0.1.css</code>; reviewers cannot see what changed between versions; and the history says nothing about who did which part.</p>
+</section>
+
+<section id="why">
+  <h2><span class="n">02</span>Why software teams use Git</h2>
+  <table>
+    <thead><tr><th style="width:28%">Need</th><th>How Git answers it</th><th style="width:30%">Instead of</th></tr></thead>
+    <tbody>
+      <tr><td><b>One current version</b></td><td>The <code>main</code> branch on GitHub is the version everyone works from and the one we grade.</td><td>Guessing which <code>_ver</code> file is latest</td></tr>
+      <tr><td><b>Every past version</b></td><td>Each commit is a saved snapshot of the whole project. You can open, compare or restore any of them.</td><td>Keeping <code>ver1.0</code>, <code>ver2.0</code> copies</td></tr>
+      <tr><td><b>See what changed</b></td><td>A diff shows exactly which lines changed, by whom, and why (the commit message).</td><td>Opening two PDFs side by side</td></tr>
+      <tr><td><b>Work in parallel</b></td><td>Branches let two people change different parts at the same time, then merge.</td><td>Sending files in chat and overwriting each other</td></tr>
+      <tr><td><b>Who did what</b></td><td>Every commit records its author. In this course the individual contribution factor is judged from GitHub only.</td><td>"I helped in the meeting"</td></tr>
+      <tr><td><b>Traceability</b></td><td>Commits, issues and pull requests can name the FR they implement, which supports your Golden Thread.</td><td>A table written at the last minute</td></tr>
+    </tbody>
+  </table>
+  <div class="note"><b>For this course:</b> work that is not committed by your own GitHub account cannot be counted as your contribution. Commit your own work, from your own account, with a message that says what you did.</div>
+</section>
+
+<section id="flow">
+  <h2><span class="n">03</span>How Git shares data in a team</h2>
+  <p>Each member has a full copy of the repository on their computer. GitHub holds the shared copy. You <b>pull</b> to get your teammates' latest work and <b>push</b> to share yours.</p>
+  <figure>
+    <svg viewBox="0 0 900 380" role="img" aria-label="Git data flow between working folder, staging area, local repository and GitHub">
+      <defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#061C90"/></marker>
+      <marker id="ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1CA4E1"/></marker></defs>
+      <rect x="20" y="20" width="590" height="200" rx="3" fill="#f3f5f8" stroke="#cfd5df"/>
+      <text x="36" y="46" font-size="15" font-weight="700" fill="#1a1d24">Your computer</text>
+      <rect x="40" y="70" width="140" height="120" rx="3" fill="#fff" stroke="#061C90"/>
+      <text x="110" y="102" text-anchor="middle" font-size="15" font-weight="700" fill="#061C90">Working folder</text>
+      <text x="110" y="126" text-anchor="middle" font-size="13" fill="#5a6170">files you edit</text>
+      <text x="110" y="146" text-anchor="middle" font-size="13" fill="#5a6170">index.html</text>
+      <text x="110" y="164" text-anchor="middle" font-size="13" fill="#5a6170">style.css</text>
+      <rect x="245" y="70" width="140" height="120" rx="3" fill="#fff" stroke="#061C90"/>
+      <text x="315" y="102" text-anchor="middle" font-size="15" font-weight="700" fill="#061C90">Staging area</text>
+      <text x="315" y="126" text-anchor="middle" font-size="13" fill="#5a6170">changes chosen</text>
+      <text x="315" y="146" text-anchor="middle" font-size="13" fill="#5a6170">for the next</text>
+      <text x="315" y="164" text-anchor="middle" font-size="13" fill="#5a6170">snapshot</text>
+      <rect x="450" y="70" width="140" height="120" rx="3" fill="#fff" stroke="#061C90"/>
+      <text x="520" y="102" text-anchor="middle" font-size="15" font-weight="700" fill="#061C90">Local repo</text>
+      <text x="520" y="126" text-anchor="middle" font-size="13" fill="#5a6170">all commits</text>
+      <text x="520" y="146" text-anchor="middle" font-size="13" fill="#5a6170">(full history)</text>
+      <line x1="180" y1="115" x2="242" y2="115" stroke="#061C90" stroke-width="2" marker-end="url(#ar)"/>
+      <text x="211" y="106" text-anchor="middle" font-size="12" font-family="JetBrains Mono" fill="#061C90">add</text>
+      <line x1="385" y1="115" x2="447" y2="115" stroke="#061C90" stroke-width="2" marker-end="url(#ar)"/>
+      <text x="416" y="106" text-anchor="middle" font-size="12" font-family="JetBrains Mono" fill="#061C90">commit</text>
+      <rect x="650" y="20" width="230" height="200" rx="3" fill="#eef8fd" stroke="#1CA4E1"/>
+      <text x="765" y="50" text-anchor="middle" font-size="15" font-weight="700" fill="#1a1d24">GitHub (remote)</text>
+      <rect x="680" y="70" width="170" height="120" rx="3" fill="#fff" stroke="#1CA4E1"/>
+      <text x="765" y="104" text-anchor="middle" font-size="15" font-weight="700" fill="#061C90">Shared repo</text>
+      <text x="765" y="128" text-anchor="middle" font-size="13" fill="#5a6170">branch main</text>
+      <text x="765" y="148" text-anchor="middle" font-size="13" fill="#5a6170">= current version</text>
+      <text x="765" y="168" text-anchor="middle" font-size="13" fill="#5a6170">everyone sees</text>
+      <path d="M590,100 C620,100 640,100 677,100" fill="none" stroke="#061C90" stroke-width="2" marker-end="url(#ar)"/>
+      <text x="633" y="92" text-anchor="middle" font-size="12" font-family="JetBrains Mono" fill="#061C90">push</text>
+      <path d="M677,150 C640,150 620,150 593,150" fill="none" stroke="#1CA4E1" stroke-width="2" marker-end="url(#ar2)"/>
+      <text x="633" y="168" text-anchor="middle" font-size="12" font-family="JetBrains Mono" fill="#1CA4E1">pull</text>
+      <g font-size="13" fill="#1a1d24">
+        <rect x="560" y="268" width="130" height="84" rx="3" fill="#fff" stroke="#cfd5df"/>
+        <text x="625" y="298" text-anchor="middle" font-weight="700">Member A</text>
+        <text x="625" y="320" text-anchor="middle" fill="#5a6170">prototype pages</text>
+        <rect x="710" y="268" width="130" height="84" rx="3" fill="#fff" stroke="#cfd5df"/>
+        <text x="775" y="298" text-anchor="middle" font-weight="700">Member B</text>
+        <text x="775" y="320" text-anchor="middle" fill="#5a6170">SRS and diagrams</text>
+      </g>
+      <line x1="625" y1="268" x2="735" y2="196" stroke="#1CA4E1" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#ar2)" marker-start="url(#ar2)"/>
+      <line x1="775" y1="268" x2="775" y2="196" stroke="#1CA4E1" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#ar2)" marker-start="url(#ar2)"/>
+      <text x="40" y="270" font-size="14" fill="#1a1d24" font-weight="700">Daily loop</text>
+      <text x="40" y="296" font-size="13" fill="#5a6170" font-family="JetBrains Mono">1. git pull        get teammates' work</text>
+      <text x="40" y="318" font-size="13" fill="#5a6170" font-family="JetBrains Mono">2. edit files      do your part</text>
+      <text x="40" y="340" font-size="13" fill="#5a6170" font-family="JetBrains Mono">3. git add + commit  save a snapshot</text>
+      <text x="40" y="362" font-size="13" fill="#5a6170" font-family="JetBrains Mono">4. git push        share it</text>
+    </svg>
+    <figcaption>Figure 1. Every member pulls the same shared repo, works locally, commits snapshots and pushes them back. The shared <code>main</code> branch is the single source of truth.</figcaption>
+  </figure>
+</section>
+
+<section id="history">
+  <h2><span class="n">04</span>Versions are commits, not file names</h2>
+  <p>You never need <code>index_ver1.0.1.html</code>. Keep one file called <code>index.html</code> and commit it each time it changes. Git keeps every version, and you can mark important ones with a <b>tag</b> such as <code>v1.0</code>.</p>
+  <figure>
+    <svg viewBox="0 0 900 300" role="img" aria-label="File-name versions compared with commit history">
+      <text x="20" y="30" font-size="15" font-weight="700" fill="#a4161a">Without Git thinking: four files, no story</text>
+      <g font-family="JetBrains Mono" font-size="13">
+        <rect x="20" y="44" width="190" height="40" rx="3" fill="#fdecec" stroke="#e3a5a7"/><text x="115" y="69" text-anchor="middle" fill="#1a1d24">index_ver1.0.html</text>
+        <rect x="230" y="44" width="200" height="40" rx="3" fill="#fdecec" stroke="#e3a5a7"/><text x="330" y="69" text-anchor="middle" fill="#1a1d24">index_ver1.0.1.html</text>
+        <rect x="450" y="44" width="190" height="40" rx="3" fill="#fdecec" stroke="#e3a5a7"/><text x="545" y="69" text-anchor="middle" fill="#1a1d24">index_final.html</text>
+        <rect x="660" y="44" width="220" height="40" rx="3" fill="#fdecec" stroke="#e3a5a7"/><text x="770" y="69" text-anchor="middle" fill="#1a1d24">index_final_real.html</text>
+      </g>
+      <text x="20" y="140" font-size="15" font-weight="700" fill="#1b6b3a">With Git: one file, a history of meaningful snapshots</text>
+      <line x1="60" y1="205" x2="860" y2="205" stroke="#061C90" stroke-width="3"/>
+      <text x="868" y="210" font-size="13" fill="#061C90" font-family="JetBrains Mono">main</text>
+      <g font-size="12.5" fill="#1a1d24">
+        <circle cx="90" cy="205" r="11" fill="#fff" stroke="#061C90" stroke-width="3"/>
+        <text x="90" y="178" text-anchor="middle" font-family="JetBrains Mono" fill="#5a6170">a1c3</text>
+        <text x="90" y="238" text-anchor="middle">Add login page</text><text x="90" y="256" text-anchor="middle" fill="#5a6170">(FR-1)</text>
+        <circle cx="270" cy="205" r="11" fill="#fff" stroke="#061C90" stroke-width="3"/>
+        <text x="270" y="178" text-anchor="middle" font-family="JetBrains Mono" fill="#5a6170">b72e</text>
+        <text x="270" y="238" text-anchor="middle">Add item list</text><text x="270" y="256" text-anchor="middle" fill="#5a6170">(FR-2)</text>
+        <circle cx="450" cy="205" r="11" fill="#061C90"/>
+        <rect x="420" y="152" width="60" height="22" rx="3" fill="#1CA4E1"/><text x="450" y="168" text-anchor="middle" fill="#fff" font-family="JetBrains Mono" font-weight="600">v1.0</text>
+        <text x="450" y="238" text-anchor="middle">Prototype check</text><text x="450" y="256" text-anchor="middle" fill="#5a6170">12 Oct</text>
+        <circle cx="630" cy="205" r="11" fill="#fff" stroke="#061C90" stroke-width="3"/>
+        <text x="630" y="178" text-anchor="middle" font-family="JetBrains Mono" fill="#5a6170">c9d0</text>
+        <text x="630" y="238" text-anchor="middle">Fix empty-name error</text><text x="630" y="256" text-anchor="middle" fill="#5a6170">(FR-2 unhappy path)</text>
+        <circle cx="810" cy="205" r="11" fill="#061C90"/>
+        <rect x="780" y="152" width="60" height="22" rx="3" fill="#1CA4E1"/><text x="810" y="168" text-anchor="middle" fill="#fff" font-family="JetBrains Mono" font-weight="600">v1.1</text>
+        <text x="810" y="238" text-anchor="middle">Demo version</text><text x="810" y="256" text-anchor="middle" fill="#5a6170">M3 demo</text>
+      </g>
+      <text x="20" y="290" font-size="13" fill="#5a6170">Each circle is a commit: a snapshot of the whole project with an author, a time and a message. Tags (blue) name the versions you want to find again.</text>
+    </svg>
+    <figcaption>Figure 2. The same work as four copied files (top) and as a commit history on one file (bottom). Only the bottom one tells a reviewer what changed, when, why, and who did it.</figcaption>
+  </figure>
+  <p>To see or restore an old version: on GitHub open the file and click <b>History</b>, or run <code>git log --oneline index.html</code>, then <code>git show v1.0:prototype/index.html</code>.</p>
+</section>
+
+<section id="branches">
+  <h2><span class="n">05</span>Branches: work in parallel without breaking main</h2>
+  <p>A branch is a separate line of commits. Do a feature on its own branch, ask a teammate to review it in a <b>pull request</b>, then merge it into <code>main</code>. Remember to merge: work left on another branch is not part of your submitted version.</p>
+  <figure>
+    <svg viewBox="0 0 900 260" role="img" aria-label="Feature branch workflow with pull requests">
+      <defs><marker id="ar3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#5a6170"/></marker></defs>
+      <line x1="40" y1="130" x2="850" y2="130" stroke="#061C90" stroke-width="3"/>
+      <text x="40" y="118" font-size="13" font-family="JetBrains Mono" fill="#061C90" font-weight="600">main</text>
+      <path d="M150,130 C190,130 190,50 240,50 L470,50 C520,50 520,130 560,130" fill="none" stroke="#1CA4E1" stroke-width="3"/>
+      <text x="250" y="38" font-size="13" font-family="JetBrains Mono" fill="#1CA4E1" font-weight="600">feature/fr-1-login   (Member A)</text>
+      <path d="M260,130 C300,130 300,210 350,210 L640,210 C690,210 690,130 730,130" fill="none" stroke="#7a5af5" stroke-width="3"/>
+      <text x="360" y="238" font-size="13" font-family="JetBrains Mono" fill="#7a5af5" font-weight="600">feature/fr-3-search   (Member B)</text>
+      <g stroke-width="3">
+        <circle cx="90" cy="130" r="9" fill="#fff" stroke="#061C90"/><circle cx="150" cy="130" r="9" fill="#fff" stroke="#061C90"/><circle cx="260" cy="130" r="9" fill="#fff" stroke="#061C90"/>
+        <circle cx="300" cy="50" r="8" fill="#fff" stroke="#1CA4E1"/><circle cx="370" cy="50" r="8" fill="#fff" stroke="#1CA4E1"/><circle cx="440" cy="50" r="8" fill="#fff" stroke="#1CA4E1"/>
+        <circle cx="400" cy="210" r="8" fill="#fff" stroke="#7a5af5"/><circle cx="480" cy="210" r="8" fill="#fff" stroke="#7a5af5"/><circle cx="560" cy="210" r="8" fill="#fff" stroke="#7a5af5"/>
+        <circle cx="560" cy="130" r="11" fill="#061C90" stroke="#061C90"/><circle cx="730" cy="130" r="11" fill="#061C90" stroke="#061C90"/><circle cx="820" cy="130" r="9" fill="#fff" stroke="#061C90"/>
+      </g>
+      <rect x="500" y="72" width="120" height="24" rx="3" fill="#fff" stroke="#5a6170"/><text x="560" y="89" text-anchor="middle" font-size="12.5" fill="#1a1d24">PR #4 reviewed</text>
+      <rect x="670" y="150" width="120" height="24" rx="3" fill="#fff" stroke="#5a6170"/><text x="730" y="167" text-anchor="middle" font-size="12.5" fill="#1a1d24">PR #5 reviewed</text>
+      <text x="560" y="160" text-anchor="middle" font-size="12" fill="#061C90" font-weight="700">merge</text>
+      <text x="820" y="160" text-anchor="middle" font-size="12" fill="#061C90" font-weight="700">demo</text>
+    </svg>
+    <figcaption>Figure 3. Two members build different FRs at the same time on their own branches. Each branch is reviewed in a pull request and merged into <code>main</code>, so <code>main</code> always holds working, reviewed work.</figcaption>
+  </figure>
+  <p>For a small team, a simple rule is enough: <b>main must always open and run</b>. Name branches after the work, for example <code>feature/fr-2-item-list</code> or <code>fix/login-empty-password</code>.</p>
+</section>
+
+<section id="structure">
+  <h2><span class="n">06</span>What a software project repo contains</h2>
+  <p>Professional repositories follow a predictable layout so that anyone, including the grader, can find things in seconds. A layout that fits the Intro2SE project:</p>
+<div class="box"><div class="tree">team-project/
+  README.md                 <span class="c">project name, team members + GitHub accounts, how to open the prototype, links</span>
+  .gitignore                <span class="c">files Git should ignore (node_modules/, .DS_Store, build output)</span>
+  docs/
+    M1-team-charter.md      <span class="c">or .pdf; one file, kept up to date</span>
+    M2-srs.md               <span class="c">FR and NFR with IDs (FR-1, FR-2, ...)</span>
+    design/
+      use-case.png
+      sequence-fr-2.png
+      data-model.png
+    final-report.md
+    golden-thread.md        <span class="c">FR -&gt; design -&gt; prototype page -&gt; test</span>
+    ai-use-statement.md
+  prototype/
+    index.html              <span class="c">the ONE entry point; opens in a browser</span>
+    pages/                  <span class="c">other screens, e.g. login.html</span>
+    css/style.css
+    js/app.js
+    assets/                 <span class="c">images, icons</span>
+  slides/
+    demo-slides.pdf
+  tests/                    <span class="c">test cases or test report (optional for M3)</span></div></div>
+  <h3>Why Markdown for documents</h3>
+  <p>Git can show line-by-line changes in text files such as <code>.md</code>, <code>.html</code> and <code>.js</code>. It cannot show what changed inside a PDF or DOCX. Write documents in Markdown when you can, and if you must use Word, export one PDF and replace the old one in the same file name. The history keeps the old version.</p>
+  <h3>The README is the front door</h3>
+  <p>When someone opens your repo, GitHub shows <code>README.md</code> first. It should answer: what is this system, who is in the team (name, student ID, GitHub account), how do I open the prototype (for example a GitHub Pages link or "open <code>prototype/index.html</code>"), and where are the documents.</p>
+</section>
+
+<section id="commits">
+  <h2><span class="n">07</span>Good commits</h2>
+  <p>A commit message is a note to your team and your future self. "Add files via upload" tells nobody anything. Write what changed and, when possible, which FR it serves.</p>
+  <div class="grid2">
+    <div class="box bad"><span class="tag">Unhelpful</span>
+<div class="tree">Add files via upload
+Update index_ver1.0.1.html
+final
+fix
+asdf</div></div>
+    <div class="box good"><span class="tag">Helpful</span>
+<div class="tree">Add item list page (FR-2)
+Show error when item name is empty (FR-2)
+Add sequence diagram for checkout (FR-4)
+Update SRS: NFR-1 response time 2 s
+Move prototype files into prototype/</div></div>
+  </div>
+  <ul>
+    <li><b>Small and often.</b> One idea per commit. Several small commits are easier to review than one huge upload.</li>
+    <li><b>Your own account.</b> Each member commits their own work. Uploading for a teammate hides their contribution.</li>
+    <li><b>Uploading on the GitHub website is fine</b>, but replace the default message in the "Commit changes" box with a real one.</li>
+  </ul>
+</section>
+
+<section id="fix">
+  <h2><span class="n">08</span>Fix your repo in 15 minutes</h2>
+  <p>You do not lose anything by deleting the old copies. Every version you committed stays in the history.</p>
+  <h3>Option A: command line</h3>
+<pre><span class="cm"># 1. get the latest shared version</span>
+git pull
+
+<span class="cm"># 2. create folders</span>
+mkdir -p docs prototype/css prototype/js slides
+
+<span class="cm"># 3. keep ONE current file and give it a plain name (git mv keeps its history)</span>
+git mv index_ver1.0.1.html prototype/index.html
+git mv style_ver1.0.1.css  prototype/css/style.css
+git mv app_ver1.0.1.js     prototype/js/app.js
+git mv "Team_M2_SRS_ver2.0.pdf" docs/M2-srs.pdf
+
+<span class="cm"># 4. remove the old copies (they remain in history)</span>
+git rm index_ver1.0.html style_ver1.0.css script_ver1.0.js "Team_M2_SRS_ver1.0.pdf"
+
+<span class="cm"># 5. fix links inside index.html: css/style.css and js/app.js, then test in a browser</span>
+
+<span class="cm"># 6. save and share</span>
+git commit -m "Reorganise repo: docs/ and prototype/, remove versioned copies"
+git push
+
+<span class="cm"># 7. optional: mark the demo version</span>
+git tag v1.1 -m "M3 demo version"
+git push --tags</pre>
+  <h3>Option B: GitHub website or GitHub Desktop</h3>
+  <ol>
+    <li>Open the current file (for example <code>index_ver1.0.1.html</code>), click the pencil icon, and change the file name box to <code>prototype/index.html</code>. Typing a <code>/</code> creates the folder. Commit with a clear message.</li>
+    <li>Do the same for the CSS, JS and document files.</li>
+    <li>Open each old copy, choose <b>Delete file</b> from the menu, and commit.</li>
+    <li>Edit <code>prototype/index.html</code> so its links point to <code>css/style.css</code> and <code>js/app.js</code>. Open the page to check it still works.</li>
+    <li>Add a <code>README.md</code> with team members, GitHub accounts and how to open the prototype.</li>
+  </ol>
+  <div class="note">If your team has work on another branch, open a pull request and merge it into <code>main</code>. We check <code>main</code>.</div>
+</section>
+
+<section id="checklist">
+  <h2><span class="n">09</span>Checklist before the demo</h2>
+  <ul class="check">
+    <li>No version numbers or "final" in file names. One file per document.</li>
+    <li>Folders: <code>docs/</code>, <code>prototype/</code>, <code>slides/</code>.</li>
+    <li><code>prototype/index.html</code> opens in a browser without a server, or there is a working GitHub Pages link.</li>
+    <li><code>README.md</code> lists members, student IDs, GitHub accounts, and how to open the prototype.</li>
+    <li>Final Report, Golden Thread table and AI-Use Statement are committed.</li>
+    <li>All work is merged into <code>main</code>.</li>
+    <li>Every member has commits from their own account with meaningful messages.</li>
+  </ul>
+</section>
+
+<section id="review">
+  <h2><span class="n">10</span>Preliminary review of your team repo</h2>
+  <p>We checked every team repository on <b>8 November 2569 at 15:27</b> (main branch and other branches, documents read automatically, live links opened; repo links are not shown here). Use this to check your own repo before your demo. It is a preliminary review, not your score.</p>
+  <div class="note"><b>"Not found"</b> means our check could not find it in your repo. If the file is there under another name, rename or move it so a reviewer finds it in seconds (see section 6). <b>"Partly"</b> means something exists but is incomplete or unclear. Your repo will be checked again before scores are final, so fixes you push still count.</div>
+  <div class="rv-bar"><select id="rvSel" aria-label="Choose your team"><option value="">Choose your team</option><option value="1">Group 1: Aura (9 Nov)</option><option value="2">Group 2: 5 idoiots (9 Nov)</option><option value="3">Group 3: I&#x27;m so hungry ahh (9 Nov)</option><option value="4">Group 4: Apollo (9 Nov)</option><option value="5">Group 5: Viounique (9 Nov)</option><option value="6">Group 6: dek70 (9 Nov)</option><option value="7">Group 7: Gamza007 (9 Nov)</option><option value="8">Group 8: MedMind (9 Nov)</option><option value="9">Group 9: Hew Khao Mak (9 Nov)</option><option value="10">Group 10: Strategic (9 Nov)</option><option value="11">Group 11: ILY3000 (9 Nov)</option><option value="12">Group 12: PhomPen Duke (9 Nov)</option><option value="13">Group 13: Socrates and Skeletons (9 Nov)</option><option value="14">Group 14: Larb Lamphon (16 Nov)</option><option value="15">Group 15: I don&#x27;t know (16 Nov)</option><option value="16">Group 16: 16RideRight (16 Nov)</option><option value="17">Group 17: ByteSquad (16 Nov)</option><option value="18">Group 18: MFU888 (16 Nov)</option><option value="19">Group 19: Yhar Bid (16 Nov)</option><option value="20">Group 20: Home sick (16 Nov)</option><option value="21">Group 21: lumen Inc. (16 Nov)</option><option value="22">Group 22: Hallo world (16 Nov)</option><option value="23">Group 23: Trauma squad (16 Nov)</option><option value="24">Group 24: team 24 (16 Nov)</option><option value="25">Group 25: Team25 (16 Nov)</option><option value="26">Group 26: The last one (16 Nov)</option></select><button id="rvAll" type="button">Show all teams</button></div>
+  <div id="rvOverview">
+  <h3>Overview</h3>
+  <p style="font-size:14px;color:var(--muted)">F = found, P = partly, - = not found. Tap a row to open that team.</p>
+  <div class="ov-wrap"><table class="ov"><thead><tr><th>Group</th><th class="l">Team</th><th>Demo</th><th>Charter</th><th>SRS</th><th>Design</th><th>Proto</th><th>Report</th><th>README</th><th>Slides</th><th>AI-Use</th><th>To do</th></tr></thead><tbody><tr class="go" data-n="1"><td>1</td><td class="l">Aura</td><td>9 Nov</td><td class="s-ok">F</td><td class="s-ok">F</td><td class="s-ok">F</td><td class="s-ok">F</td><td class="s-pt">P</td><td class="s-ok">F</td><td class="s-no">-</td><td class="s-no">-</td><td>5</td></tr><tr class="go" data-n="2"><td>2</td><td class="l">5 idoiots</td><td>9 Nov</td><td class="s-ok">F</td><td class="s-ok">F</td><td class="s-no">-</td><td class="s-pt">P</td><td class="s-pt">P</td><td class="s-pt">P</td><td class="s-no">-</td><td class="s-pt">P</td><td>12</td></tr><tr class="go" data-n="3"><td>3</td><td class="l">I&#x27;m so hungry ahh</td><td>9 Nov</td><td class="s-ok">F</td><td class="s-ok">F</td><td class="s-pt">P</td><td class="s-ok">F</td><td class="s-ok">F</td><td class="s-ok">F</td><td class="s-ok">F</td><td class="s-ok">F</td><td>2</td></tr><tr class="go" data-n="4"><td>4</td><td class="l">Apollo</td><td>9 Nov</td><td class="s-no">-</td><td class="s-pt">P</td><td class="s-pt">P</td><td class="s-ok">F</td><td class="s-pt">P</td><td class="s-ok">F</td><td class="s-no">-</td><td class="s-pt">P</td><td>7</td></tr><tr class="go" data-n="5"><td>5</td><td class="l">Viounique</td><td>9 Nov</td><td class="s-ok">F</td><td class="s-ok">F</td><td class="s-no">-</td><td class="s-ok">F</td><td class="s-pt">P</td><td class="s-ok">F</td><td class="s-no">-</td><td class="s-pt">P</td><td>6</td></tr><tr class="go" data-n="6"><td>6</td><td class="l">dek70</td><td>9 Nov</td><td class="s-ok">F</td><td class="s-ok">F</td><td class="s-ok">F</td><td class="s-ok">F</td><td class="s-ok">F</td><td class="s-ok">F</td><td class="s-ok">F</td><td class="s-ok">F</td><td>4</td></tr><tr class="go" data-n="7"><td>7</td><td class="l">Gamza007</td><td>9 Nov</td><td class="s-no">-</td><td class="s-no">-</td><td class="s-no">-</td><td class="s-no">-</td><td class="s-no">-</td><td class="s-no">-</td><td class="s-no">-</td><td class="s-no">-</td><td>1</td></tr><tr class="go" data-n="8"><td>8</td><td class="l">MedMind</td><td>9 Nov</td><td class="s-ok">F</td><td class="s-ok">F</td><td class="s-ok">F</td><td class="s-ok">F</td><td class="s-ok">F</td><td class="s-ok">F</td><td class="s-ok">F</td><td class="s-ok">F</td><td>2</td></tr><tr class="go" data-n="9"><td>9</td><td class="l">Hew Khao Mak</td><td>9 Nov</td><td class="s-no">-</td><td class="s-ok">F</td><td class="s-no">-</td><td class="s-no">-</td><td class="s-pt">P</td><td class="s-pt">P</td><td class="s-no">-</td><td class="s-pt">P</td><td>11</td></tr><tr class="go" data-n="10"><td>10</td><td class="l">Strategic</td><td>9 Nov</td><td class="s-no">-</td><td class="s-no">-</td><td class="s-no">-</td><td class="s-pt">P</td><td class="s-pt">P</td><td class="s-ok">F</td><td class="s-no">-</td><td class="s-pt">P</td><td>12</td></tr><tr class="go" data-n="11"><td>11</td><td class="l">ILY3000</td><td>9 Nov</td><td class="s-ok">F</td><td class="s-ok">F</td><td class="s-ok">F</td><td class="s-ok">F</td><td class="s-pt">P</td><td class="s-pt">P</td><td class="s-no">-</td><td class="s-ok">F</td><td>5</td></tr><tr class="go" data-n="12"><td>12</td><td class="l">PhomPen Duke</td><td>9 Nov</td><td class="s-ok">F</td><td class="s-ok">F</td><td class="s-no">-</td><td class="s-pt">P</td><td class="s-pt">P</td><td class="s-pt">P</td><td class="s-pt">P</td><td class="s-ok">F</td><td>9</td></tr><tr class="go" data-n="13"><td>13</td><td class="l">Socrates and Skeletons</td><td>9 Nov</td><td class="s-no">-</td><td class="s-ok">F</td><td class="s-pt">P</td><td class="s-ok">F</td><td class="s-pt">P</td><td class="s-ok">F</td><td class="s-no">-</td><td class="s-ok">F</td><td>5</td></tr><tr class="go" data-n="14"><td>14</td><td class="l">Larb Lamphon</td><td>16 Nov</td><td class="s-ok">F</td><td class="s-ok">F</td><td class="s-pt">P</td><td class="s-pt">P</td><td class="s-pt">P</td><td class="s-ok">F</td><td class="s-no">-</td><td class="s-pt">P</td><td>9</td></tr><tr class="go" data-n="15"><td>15</td><td class="l">I don&#x27;t know</td><td>16 Nov</td><td class="s-no">-</td><td class="s-no">-</td><td class="s-no">-</td><td class="s-ok">F</td><td class="s-pt">P</td><td class="s-ok">F</td><td class="s-no">-</td><td class="s-no">-</td><td>9</td></tr><tr class="go" data-n="16"><td>16</td><td class="l">16RideRight</td><td>16 Nov</td><td class="s-no">-</td><td class="s-no">-</td><td class="s-no">-</td><td class="s-pt">P</td><td class="s-no">-</td><td class="s-ok">F</td><td class="s-no">-</td><td class="s-no">-</td><td>12</td></tr><tr class="go" data-n="17"><td>17</td><td class="l">ByteSquad</td><td>16 Nov</td><td class="s-ok">F</td><td class="s-ok">F</td><td class="s-no">-</td><td class="s-pt">P</td><td class="s-no">-</td><td class="s-ok">F</td><td class="s-no">-</td><td class="s-no">-</td><td>7</td></tr><tr class="go" data-n="18"><td>18</td><td class="l">MFU888</td><td>16 Nov</td><td class="s-ok">F</td><td class="s-ok">F</td><td class="s-ok">F</td><td class="s-ok">F</td><td class="s-ok">F</td><td class="s-ok">F</td><td class="s-ok">F</td><td class="s-ok">F</td><td>2</td></tr><tr class="go" data-n="19"><td>19</td><td class="l">Yhar Bid</td><td>16 Nov</td><td class="s-no">-</td><td class="s-ok">F</td><td class="s-no">-</td><td class="s-pt">P</td><td class="s-pt">P</td><td class="s-pt">P</td><td class="s-no">-</td><td class="s-pt">P</td><td>9</td></tr><tr class="go" data-n="20"><td>20</td><td class="l">Home sick</td><td>16 Nov</td><td class="s-no">-</td><td class="s-ok">F</td><td class="s-no">-</td><td class="s-pt">P</td><td class="s-ok">F</td><td class="s-pt">P</td><td class="s-no">-</td><td class="s-pt">P</td><td>10</td></tr><tr class="go" data-n="21"><td>21</td><td class="l">lumen Inc.</td><td>16 Nov</td><td class="s-ok">F</td><td class="s-ok">F</td><td class="s-ok">F</td><td class="s-ok">F</td><td class="s-ok">F</td><td class="s-ok">F</td><td class="s-ok">F</td><td class="s-ok">F</td><td>1</td></tr><tr class="go" data-n="22"><td>22</td><td class="l">Hallo world</td><td>16 Nov</td><td class="s-no">-</td><td class="s-no">-</td><td class="s-no">-</td><td class="s-no">-</td><td class="s-no">-</td><td class="s-no">-</td><td class="s-no">-</td><td class="s-no">-</td><td>1</td></tr><tr class="go" data-n="23"><td>23</td><td class="l">Trauma squad</td><td>16 Nov</td><td class="s-no">-</td><td class="s-pt">P</td><td class="s-no">-</td><td class="s-pt">P</td><td class="s-no">-</td><td class="s-pt">P</td><td class="s-pt">P</td><td class="s-no">-</td><td>13</td></tr><tr class="go" data-n="24"><td>24</td><td class="l">team 24</td><td>16 Nov</td><td class="s-no">-</td><td class="s-no">-</td><td class="s-pt">P</td><td class="s-pt">P</td><td class="s-no">-</td><td class="s-ok">F</td><td class="s-no">-</td><td class="s-no">-</td><td>10</td></tr><tr class="go" data-n="25"><td>25</td><td class="l">Team25</td><td>16 Nov</td><td class="s-ok">F</td><td class="s-ok">F</td><td class="s-ok">F</td><td class="s-ok">F</td><td class="s-ok">F</td><td class="s-pt">P</td><td class="s-no">-</td><td class="s-ok">F</td><td>7</td></tr><tr class="go" data-n="26"><td>26</td><td class="l">The last one</td><td>16 Nov</td><td class="s-ok">F</td><td class="s-ok">F</td><td class="s-ok">F</td><td class="s-ok">F</td><td class="s-ok">F</td><td class="s-ok">F</td><td class="s-ok">F</td><td class="s-ok">F</td><td>2</td></tr></tbody></table></div>
+  </div>
+  <div id="rvCards"><div class="card" id="team-1" data-n="1"><h3>Group 1: Aura</h3><div class="meta">Demo Mon 9 Nov 12:05-12:17</div><table><thead><tr><th>M3 item</th><th style="width:30%">What we found</th></tr></thead><tbody><tr><td>Team Charter</td><td class="s-ok">Found</td></tr><tr><td>SRS</td><td class="s-ok">Found</td></tr><tr><td>Design + diagrams</td><td class="s-ok">Found</td></tr><tr><td>Clickable prototype</td><td class="s-ok">Found</td></tr><tr><td>Final Report + Golden Thread</td><td class="s-pt">Partly</td></tr><tr><td>Repo + README</td><td class="s-ok">Found</td></tr><tr><td>Demo slides</td><td class="s-no">Not found</td></tr><tr><td>AI-Use Statement</td><td class="s-no">Not found</td></tr></tbody></table><b>Before your demo</b><ol><li>Complete the Golden Thread table so every Must FR links to a diagram, a prototype page and a test. Missing table = score capped at 50%.</li><li>Add the demo slides to slides/ (PDF or a link in the README).</li><li>Add the AI-Use Statement (docs/ai-use-statement.md): which AI tools, for which parts, and how you checked the output. Missing = score capped at 50%.</li><li>Minimum bar: be ready to show which page implements which FR (label pages or list them in the Golden Thread table).</li><li>Minimum bar: at the demo, every Must FR must be clickable on the happy path.</li></ol></div><div class="card" id="team-2" data-n="2"><h3>Group 2: 5 idoiots</h3><div class="meta">Demo Mon 9 Nov 12:17-12:29</div><table><thead><tr><th>M3 item</th><th style="width:30%">What we found</th></tr></thead><tbody><tr><td>Team Charter</td><td class="s-ok">Found</td></tr><tr><td>SRS</td><td class="s-ok">Found</td></tr><tr><td>Design + diagrams</td><td class="s-no">Not found</td></tr><tr><td>Clickable prototype</td><td class="s-pt">Partly</td></tr><tr><td>Final Report + Golden Thread</td><td class="s-pt">Partly</td></tr><tr><td>Repo + README</td><td class="s-pt">Partly</td></tr><tr><td>Demo slides</td><td class="s-no">Not found</td></tr><tr><td>AI-Use Statement</td><td class="s-pt">Partly</td></tr></tbody></table><b>Before your demo</b><ol><li>Add the design document and diagrams (use case, sequence, data model) to docs/design/.</li><li>Make sure the prototype covers every Must FR and that the submitted version is clear (one index.html).</li><li>Complete the Golden Thread table so every Must FR links to a diagram, a prototype page and a test. Missing table = score capped at 50%.</li><li>Add a README.md: system name, team members with student IDs and GitHub accounts, how to open the prototype, where the documents are.</li><li>Add the demo slides to slides/ (PDF or a link in the README).</li><li>Complete the AI-Use Statement: tools, parts, prompts and how you checked the results.</li><li>Minimum bar: check that the prototype opens by double-clicking prototype/index.html, or give a working link in the README.</li><li>Minimum bar: be ready to show which page implements which FR (label pages or list them in the Golden Thread table).</li><li>Minimum bar: at the demo, every Must FR must be clickable on the happy path.</li></ol><div class="gh"><b>Git hygiene</b><ul><li>Remove versioned copies (_ver1.0, _ver2.0) and keep one file per document; history keeps old versions.</li><li>Move files into docs/, prototype/ and slides/.</li><li>Write meaningful commit messages instead of &quot;Add files via upload&quot;.</li></ul></div></div><div class="card" id="team-3" data-n="3"><h3>Group 3: I&#x27;m so hungry ahh</h3><div class="meta">Demo Mon 9 Nov 12:29-12:41</div><table><thead><tr><th>M3 item</th><th style="width:30%">What we found</th></tr></thead><tbody><tr><td>Team Charter</td><td class="s-ok">Found</td></tr><tr><td>SRS</td><td class="s-ok">Found</td></tr><tr><td>Design + diagrams</td><td class="s-pt">Partly</td></tr><tr><td>Clickable prototype</td><td class="s-ok">Found</td></tr><tr><td>Final Report + Golden Thread</td><td class="s-ok">Found</td></tr><tr><td>Repo + README</td><td class="s-ok">Found</td></tr><tr><td>Demo slides</td><td class="s-ok">Found</td></tr><tr><td>AI-Use Statement</td><td class="s-ok">Found</td></tr></tbody></table><b>Before your demo</b><ol><li>Complete the design: diagrams for the Must FRs, saved in docs/design/.</li><li>Minimum bar: at the demo, every Must FR must be clickable on the happy path.</li></ol></div><div class="card" id="team-4" data-n="4"><h3>Group 4: Apollo</h3><div class="meta">Demo Mon 9 Nov 12:41-12:53</div><table><thead><tr><th>M3 item</th><th style="width:30%">What we found</th></tr></thead><tbody><tr><td>Team Charter</td><td class="s-no">Not found</td></tr><tr><td>SRS</td><td class="s-pt">Partly</td></tr><tr><td>Design + diagrams</td><td class="s-pt">Partly</td></tr><tr><td>Clickable prototype</td><td class="s-ok">Found</td></tr><tr><td>Final Report + Golden Thread</td><td class="s-pt">Partly</td></tr><tr><td>Repo + README</td><td class="s-ok">Found</td></tr><tr><td>Demo slides</td><td class="s-no">Not found</td></tr><tr><td>AI-Use Statement</td><td class="s-pt">Partly</td></tr></tbody></table><b>Before your demo</b><ol><li>Add the Team Charter to docs/ (for example docs/M1-team-charter.pdf).</li><li>Complete the SRS: every FR and NFR has an ID (FR-1, NFR-1) and the Must FRs are marked.</li><li>Complete the design: diagrams for the Must FRs, saved in docs/design/.</li><li>Complete the Golden Thread table so every Must FR links to a diagram, a prototype page and a test. Missing table = score capped at 50%.</li><li>Add the demo slides to slides/ (PDF or a link in the README).</li><li>Complete the AI-Use Statement: tools, parts, prompts and how you checked the results.</li><li>Minimum bar: at the demo, every Must FR must be clickable on the happy path.</li></ol></div><div class="card" id="team-5" data-n="5"><h3>Group 5: Viounique</h3><div class="meta">Demo Mon 9 Nov 12:53-13:05</div><table><thead><tr><th>M3 item</th><th style="width:30%">What we found</th></tr></thead><tbody><tr><td>Team Charter</td><td class="s-ok">Found</td></tr><tr><td>SRS</td><td class="s-ok">Found</td></tr><tr><td>Design + diagrams</td><td class="s-no">Not found</td></tr><tr><td>Clickable prototype</td><td class="s-ok">Found</td></tr><tr><td>Final Report + Golden Thread</td><td class="s-pt">Partly</td></tr><tr><td>Repo + README</td><td class="s-ok">Found</td></tr><tr><td>Demo slides</td><td class="s-no">Not found</td></tr><tr><td>AI-Use Statement</td><td class="s-pt">Partly</td></tr></tbody></table><b>Before your demo</b><ol><li>Add the design document and diagrams (use case, sequence, data model) to docs/design/.</li><li>Complete the Golden Thread table so every Must FR links to a diagram, a prototype page and a test. Missing table = score capped at 50%.</li><li>Add the demo slides to slides/ (PDF or a link in the README).</li><li>Complete the AI-Use Statement: tools, parts, prompts and how you checked the results.</li><li>Minimum bar: at the demo, every Must FR must be clickable on the happy path.</li></ol><div class="gh"><b>Git hygiene</b><ul><li>Write meaningful commit messages instead of the default ones.</li></ul></div></div><div class="card" id="team-6" data-n="6"><h3>Group 6: dek70</h3><div class="meta">Demo Mon 9 Nov 13:05-13:17</div><table><thead><tr><th>M3 item</th><th style="width:30%">What we found</th></tr></thead><tbody><tr><td>Team Charter</td><td class="s-ok">Found</td></tr><tr><td>SRS</td><td class="s-ok">Found</td></tr><tr><td>Design + diagrams</td><td class="s-ok">Found</td></tr><tr><td>Clickable prototype</td><td class="s-ok">Found</td></tr><tr><td>Final Report + Golden Thread</td><td class="s-ok">Found</td></tr><tr><td>Repo + README</td><td class="s-ok">Found</td></tr><tr><td>Demo slides</td><td class="s-ok">Found</td></tr><tr><td>AI-Use Statement</td><td class="s-ok">Found</td></tr></tbody></table><b>Before your demo</b><ol><li>Minimum bar: be ready to show which page implements which FR (label pages or list them in the Golden Thread table).</li><li>Minimum bar: at the demo, every Must FR must be clickable on the happy path.</li></ol><div class="gh"><b>Git hygiene</b><ul><li>Rename or remove the duplicate download &quot;index (9).html&quot; so there is one clear entry point.</li><li>Write meaningful commit messages.</li></ul></div></div><div class="card" id="team-7" data-n="7"><h3>Group 7: Gamza007</h3><div class="meta">Demo Mon 9 Nov 13:17-13:29</div><table><thead><tr><th>M3 item</th><th style="width:30%">What we found</th></tr></thead><tbody><tr><td>Team Charter</td><td class="s-no">No repo</td></tr><tr><td>SRS</td><td class="s-no">No repo</td></tr><tr><td>Design + diagrams</td><td class="s-no">No repo</td></tr><tr><td>Clickable prototype</td><td class="s-no">No repo</td></tr><tr><td>Final Report + Golden Thread</td><td class="s-no">No repo</td></tr><tr><td>Repo + README</td><td class="s-no">No repo</td></tr><tr><td>Demo slides</td><td class="s-no">No repo</td></tr><tr><td>AI-Use Statement</td><td class="s-no">No repo</td></tr></tbody></table><b>Before your demo</b><ol><li>We cannot open your repo link (GitHub returns 404). Make the repo public or add the instructor account prascymj as a collaborator, then confirm the link.</li></ol></div><div class="card" id="team-8" data-n="8"><h3>Group 8: MedMind</h3><div class="meta">Demo Mon 9 Nov 13:29-13:41</div><table><thead><tr><th>M3 item</th><th style="width:30%">What we found</th></tr></thead><tbody><tr><td>Team Charter</td><td class="s-ok">Found</td></tr><tr><td>SRS</td><td class="s-ok">Found</td></tr><tr><td>Design + diagrams</td><td class="s-ok">Found</td></tr><tr><td>Clickable prototype</td><td class="s-ok">Found</td></tr><tr><td>Final Report + Golden Thread</td><td class="s-ok">Found</td></tr><tr><td>Repo + README</td><td class="s-ok">Found</td></tr><tr><td>Demo slides</td><td class="s-ok">Found</td></tr><tr><td>AI-Use Statement</td><td class="s-ok">Found</td></tr></tbody></table><b>Before your demo</b><ol><li>Minimum bar: at the demo, every Must FR must be clickable on the happy path.</li></ol><div class="gh"><b>Git hygiene</b><ul><li>Remove the duplicate download &quot;(2)&quot; copy of the SRS.</li></ul></div></div><div class="card" id="team-9" data-n="9"><h3>Group 9: Hew Khao Mak</h3><div class="meta">Demo Mon 9 Nov 13:41-13:53</div><table><thead><tr><th>M3 item</th><th style="width:30%">What we found</th></tr></thead><tbody><tr><td>Team Charter</td><td class="s-no">Not found</td></tr><tr><td>SRS</td><td class="s-ok">Found</td></tr><tr><td>Design + diagrams</td><td class="s-no">Not found</td></tr><tr><td>Clickable prototype</td><td class="s-no">Not found</td></tr><tr><td>Final Report + Golden Thread</td><td class="s-pt">Partly</td></tr><tr><td>Repo + README</td><td class="s-pt">Partly</td></tr><tr><td>Demo slides</td><td class="s-no">Not found</td></tr><tr><td>AI-Use Statement</td><td class="s-pt">Partly</td></tr></tbody></table><b>Before your demo</b><ol><li>The repo only contains the SRS. Add the prototype and the other M3 files; without a prototype the work is returned for revision.</li><li>Add the Team Charter to docs/ (for example docs/M1-team-charter.pdf).</li><li>Add the design document and diagrams (use case, sequence, data model) to docs/design/.</li><li>Add the clickable prototype to prototype/ with one entry point, prototype/index.html.</li><li>Complete the Golden Thread table so every Must FR links to a diagram, a prototype page and a test. Missing table = score capped at 50%.</li><li>Improve the README: say exactly how to open the prototype and list members with GitHub accounts.</li><li>Add the demo slides to slides/ (PDF or a link in the README).</li><li>Complete the AI-Use Statement: tools, parts, prompts and how you checked the results.</li><li>Minimum bar: the prototype must open in a browser without installing or running a server. If it needs a build, publish it (GitHub Pages or similar) and put the link at the top of the README.</li><li>Minimum bar: be ready to show which page implements which FR (label pages or list them in the Golden Thread table).</li><li>Minimum bar: at the demo, every Must FR must be clickable on the happy path.</li></ol></div><div class="card" id="team-10" data-n="10"><h3>Group 10: Strategic</h3><div class="meta">Demo Mon 9 Nov 13:53-14:05</div><table><thead><tr><th>M3 item</th><th style="width:30%">What we found</th></tr></thead><tbody><tr><td>Team Charter</td><td class="s-no">Not found</td></tr><tr><td>SRS</td><td class="s-no">Not found</td></tr><tr><td>Design + diagrams</td><td class="s-no">Not found</td></tr><tr><td>Clickable prototype</td><td class="s-pt">Partly</td></tr><tr><td>Final Report + Golden Thread</td><td class="s-pt">Partly</td></tr><tr><td>Repo + README</td><td class="s-ok">Found</td></tr><tr><td>Demo slides</td><td class="s-no">Not found</td></tr><tr><td>AI-Use Statement</td><td class="s-pt">Partly</td></tr></tbody></table><b>Before your demo</b><ol><li>Your live link returns 404 (page not found). Fix the link or the GitHub Pages setting.</li><li>Add the Team Charter to docs/ (for example docs/M1-team-charter.pdf).</li><li>Add the SRS with numbered FR and NFR to docs/ (for example docs/M2-srs.pdf).</li><li>Add the design document and diagrams (use case, sequence, data model) to docs/design/.</li><li>Make sure the prototype covers every Must FR and that the submitted version is clear (one index.html).</li><li>Complete the Golden Thread table so every Must FR links to a diagram, a prototype page and a test. Missing table = score capped at 50%.</li><li>Add the demo slides to slides/ (PDF or a link in the README).</li><li>Complete the AI-Use Statement: tools, parts, prompts and how you checked the results.</li><li>Minimum bar: the prototype must open in a browser without installing or running a server. If it needs a build, publish it (GitHub Pages or similar) and put the link at the top of the README.</li><li>Minimum bar: be ready to show which page implements which FR (label pages or list them in the Golden Thread table).</li><li>Minimum bar: at the demo, every Must FR must be clickable on the happy path.</li></ol><div class="gh"><b>Git hygiene</b><ul><li>Write meaningful commit messages instead of the default ones.</li></ul></div></div><div class="card" id="team-11" data-n="11"><h3>Group 11: ILY3000</h3><div class="meta">Demo Mon 9 Nov 14:05-14:17</div><table><thead><tr><th>M3 item</th><th style="width:30%">What we found</th></tr></thead><tbody><tr><td>Team Charter</td><td class="s-ok">Found</td></tr><tr><td>SRS</td><td class="s-ok">Found</td></tr><tr><td>Design + diagrams</td><td class="s-ok">Found</td></tr><tr><td>Clickable prototype</td><td class="s-ok">Found</td></tr><tr><td>Final Report + Golden Thread</td><td class="s-pt">Partly</td></tr><tr><td>Repo + README</td><td class="s-pt">Partly</td></tr><tr><td>Demo slides</td><td class="s-no">Not found</td></tr><tr><td>AI-Use Statement</td><td class="s-ok">Found</td></tr></tbody></table><b>Before your demo</b><ol><li>Complete the Golden Thread table so every Must FR links to a diagram, a prototype page and a test. Missing table = score capped at 50%.</li><li>Improve the README: say exactly how to open the prototype and list members with GitHub accounts.</li><li>Add the demo slides to slides/ (PDF or a link in the README).</li><li>Minimum bar: be ready to show which page implements which FR (label pages or list them in the Golden Thread table).</li><li>Minimum bar: at the demo, every Must FR must be clickable on the happy path.</li></ol></div><div class="card" id="team-12" data-n="12"><h3>Group 12: PhomPen Duke</h3><div class="meta">Demo Mon 9 Nov 14:17-14:29</div><table><thead><tr><th>M3 item</th><th style="width:30%">What we found</th></tr></thead><tbody><tr><td>Team Charter</td><td class="s-ok">Found</td></tr><tr><td>SRS</td><td class="s-ok">Found</td></tr><tr><td>Design + diagrams</td><td class="s-no">Not found</td></tr><tr><td>Clickable prototype</td><td class="s-pt">Partly</td></tr><tr><td>Final Report + Golden Thread</td><td class="s-pt">Partly</td></tr><tr><td>Repo + README</td><td class="s-pt">Partly</td></tr><tr><td>Demo slides</td><td class="s-pt">Partly</td></tr><tr><td>AI-Use Statement</td><td class="s-ok">Found</td></tr></tbody></table><b>Before your demo</b><ol><li>Your live link returns 404 (page not found). Fix the link or the GitHub Pages setting.</li><li>Add the design document and diagrams (use case, sequence, data model) to docs/design/.</li><li>Make sure the prototype covers every Must FR and that the submitted version is clear (one index.html).</li><li>Complete the Golden Thread table so every Must FR links to a diagram, a prototype page and a test. Missing table = score capped at 50%.</li><li>Improve the README: say exactly how to open the prototype and list members with GitHub accounts.</li><li>Finish the demo slides and commit them.</li><li>Minimum bar: the prototype must open in a browser without installing or running a server. If it needs a build, publish it (GitHub Pages or similar) and put the link at the top of the README.</li><li>Minimum bar: at the demo, every Must FR must be clickable on the happy path.</li></ol><div class="gh"><b>Git hygiene</b><ul><li>Remove duplicate downloads named &quot;(1)&quot;.</li></ul></div></div><div class="card" id="team-13" data-n="13"><h3>Group 13: Socrates and Skeletons</h3><div class="meta">Demo Mon 9 Nov 14:29-14:41</div><table><thead><tr><th>M3 item</th><th style="width:30%">What we found</th></tr></thead><tbody><tr><td>Team Charter</td><td class="s-no">Not found</td></tr><tr><td>SRS</td><td class="s-ok">Found</td></tr><tr><td>Design + diagrams</td><td class="s-pt">Partly</td></tr><tr><td>Clickable prototype</td><td class="s-ok">Found</td></tr><tr><td>Final Report + Golden Thread</td><td class="s-pt">Partly</td></tr><tr><td>Repo + README</td><td class="s-ok">Found</td></tr><tr><td>Demo slides</td><td class="s-no">Not found</td></tr><tr><td>AI-Use Statement</td><td class="s-ok">Found</td></tr></tbody></table><b>Before your demo</b><ol><li>Add the Team Charter to docs/ (for example docs/M1-team-charter.pdf).</li><li>Complete the design: diagrams for the Must FRs, saved in docs/design/.</li><li>Complete the Golden Thread table so every Must FR links to a diagram, a prototype page and a test. Missing table = score capped at 50%.</li><li>Add the demo slides to slides/ (PDF or a link in the README).</li><li>Minimum bar: at the demo, every Must FR must be clickable on the happy path.</li></ol></div><div class="card" id="team-14" data-n="14"><h3>Group 14: Larb Lamphon</h3><div class="meta">Demo Mon 16 Nov 12:05-12:17</div><table><thead><tr><th>M3 item</th><th style="width:30%">What we found</th></tr></thead><tbody><tr><td>Team Charter</td><td class="s-ok">Found</td></tr><tr><td>SRS</td><td class="s-ok">Found</td></tr><tr><td>Design + diagrams</td><td class="s-pt">Partly</td></tr><tr><td>Clickable prototype</td><td class="s-pt">Partly</td></tr><tr><td>Final Report + Golden Thread</td><td class="s-pt">Partly</td></tr><tr><td>Repo + README</td><td class="s-ok">Found</td></tr><tr><td>Demo slides</td><td class="s-no">Not found</td></tr><tr><td>AI-Use Statement</td><td class="s-pt">Partly</td></tr></tbody></table><b>Before your demo</b><ol><li>Some M3 files (Team14_M3, SDD) are on another branch. Merge them into main.</li><li>Complete the design: diagrams for the Must FRs, saved in docs/design/.</li><li>Make sure the prototype covers every Must FR and that the submitted version is clear (one index.html).</li><li>Complete the Golden Thread table so every Must FR links to a diagram, a prototype page and a test. Missing table = score capped at 50%.</li><li>Add the demo slides to slides/ (PDF or a link in the README).</li><li>Complete the AI-Use Statement: tools, parts, prompts and how you checked the results.</li><li>Minimum bar: the prototype must open in a browser without installing or running a server. If it needs a build, publish it (GitHub Pages or similar) and put the link at the top of the README.</li><li>Minimum bar: at the demo, every Must FR must be clickable on the happy path.</li></ol><div class="gh"><b>Git hygiene</b><ul><li>Remove the duplicate download named &quot;(1)&quot; and move root files into folders.</li></ul></div></div><div class="card" id="team-15" data-n="15"><h3>Group 15: I don&#x27;t know</h3><div class="meta">Demo Mon 16 Nov 12:17-12:29</div><table><thead><tr><th>M3 item</th><th style="width:30%">What we found</th></tr></thead><tbody><tr><td>Team Charter</td><td class="s-no">Not found</td></tr><tr><td>SRS</td><td class="s-no">Not found</td></tr><tr><td>Design + diagrams</td><td class="s-no">Not found</td></tr><tr><td>Clickable prototype</td><td class="s-ok">Found</td></tr><tr><td>Final Report + Golden Thread</td><td class="s-pt">Partly</td></tr><tr><td>Repo + README</td><td class="s-ok">Found</td></tr><tr><td>Demo slides</td><td class="s-no">Not found</td></tr><tr><td>AI-Use Statement</td><td class="s-no">Not found</td></tr></tbody></table><b>Before your demo</b><ol><li>Your live link returns 404 (page not found). Fix the link or the GitHub Pages setting.</li><li>Several FR branches are not merged. Merge finished work into main.</li><li>Add the Team Charter to docs/ (for example docs/M1-team-charter.pdf).</li><li>Add the SRS with numbered FR and NFR to docs/ (for example docs/M2-srs.pdf).</li><li>Add the design document and diagrams (use case, sequence, data model) to docs/design/.</li><li>Complete the Golden Thread table so every Must FR links to a diagram, a prototype page and a test. Missing table = score capped at 50%.</li><li>Add the demo slides to slides/ (PDF or a link in the README).</li><li>Add the AI-Use Statement (docs/ai-use-statement.md): which AI tools, for which parts, and how you checked the output. Missing = score capped at 50%.</li><li>Minimum bar: at the demo, every Must FR must be clickable on the happy path.</li></ol></div><div class="card" id="team-16" data-n="16"><h3>Group 16: 16RideRight</h3><div class="meta">Demo Mon 16 Nov 12:29-12:41</div><table><thead><tr><th>M3 item</th><th style="width:30%">What we found</th></tr></thead><tbody><tr><td>Team Charter</td><td class="s-no">Not found</td></tr><tr><td>SRS</td><td class="s-no">Not found</td></tr><tr><td>Design + diagrams</td><td class="s-no">Not found</td></tr><tr><td>Clickable prototype</td><td class="s-pt">Partly</td></tr><tr><td>Final Report + Golden Thread</td><td class="s-no">Not found</td></tr><tr><td>Repo + README</td><td class="s-ok">Found</td></tr><tr><td>Demo slides</td><td class="s-no">Not found</td></tr><tr><td>AI-Use Statement</td><td class="s-no">Not found</td></tr></tbody></table><b>Before your demo</b><ol><li>The repo mainly contains a Chrome extension. Add the M3 documents and make clear how to open the prototype.</li><li>Add the Team Charter to docs/ (for example docs/M1-team-charter.pdf).</li><li>Add the SRS with numbered FR and NFR to docs/ (for example docs/M2-srs.pdf).</li><li>Add the design document and diagrams (use case, sequence, data model) to docs/design/.</li><li>Make sure the prototype covers every Must FR and that the submitted version is clear (one index.html).</li><li>Add the Final Report and the Golden Thread table (FR to design to prototype page to test), for example docs/final-report.md.</li><li>Add the demo slides to slides/ (PDF or a link in the README).</li><li>Add the AI-Use Statement (docs/ai-use-statement.md): which AI tools, for which parts, and how you checked the output. Missing = score capped at 50%.</li><li>Minimum bar: check that the prototype opens by double-clicking prototype/index.html, or give a working link in the README.</li><li>Minimum bar: be ready to show which page implements which FR (label pages or list them in the Golden Thread table).</li><li>Minimum bar: at the demo, every Must FR must be clickable on the happy path.</li></ol><div class="gh"><b>Git hygiene</b><ul><li>Remove the duplicate &quot;(2)&quot; file and move root files into folders.</li></ul></div></div><div class="card" id="team-17" data-n="17"><h3>Group 17: ByteSquad</h3><div class="meta">Demo Mon 16 Nov 12:41-12:53</div><table><thead><tr><th>M3 item</th><th style="width:30%">What we found</th></tr></thead><tbody><tr><td>Team Charter</td><td class="s-ok">Found</td></tr><tr><td>SRS</td><td class="s-ok">Found</td></tr><tr><td>Design + diagrams</td><td class="s-no">Not found</td></tr><tr><td>Clickable prototype</td><td class="s-pt">Partly</td></tr><tr><td>Final Report + Golden Thread</td><td class="s-no">Not found</td></tr><tr><td>Repo + README</td><td class="s-ok">Found</td></tr><tr><td>Demo slides</td><td class="s-no">Not found</td></tr><tr><td>AI-Use Statement</td><td class="s-no">Not found</td></tr></tbody></table><b>Before your demo</b><ol><li>Add the design document and diagrams (use case, sequence, data model) to docs/design/.</li><li>Make sure the prototype covers every Must FR and that the submitted version is clear (one index.html).</li><li>Add the Final Report and the Golden Thread table (FR to design to prototype page to test), for example docs/final-report.md.</li><li>Add the demo slides to slides/ (PDF or a link in the README).</li><li>Add the AI-Use Statement (docs/ai-use-statement.md): which AI tools, for which parts, and how you checked the output. Missing = score capped at 50%.</li><li>Minimum bar: the prototype must open in a browser without installing or running a server. If it needs a build, publish it (GitHub Pages or similar) and put the link at the top of the README.</li><li>Minimum bar: at the demo, every Must FR must be clickable on the happy path.</li></ol></div><div class="card" id="team-18" data-n="18"><h3>Group 18: MFU888</h3><div class="meta">Demo Mon 16 Nov 12:53-13:05</div><table><thead><tr><th>M3 item</th><th style="width:30%">What we found</th></tr></thead><tbody><tr><td>Team Charter</td><td class="s-ok">Found</td></tr><tr><td>SRS</td><td class="s-ok">Found</td></tr><tr><td>Design + diagrams</td><td class="s-ok">Found</td></tr><tr><td>Clickable prototype</td><td class="s-ok">Found</td></tr><tr><td>Final Report + Golden Thread</td><td class="s-ok">Found</td></tr><tr><td>Repo + README</td><td class="s-ok">Found</td></tr><tr><td>Demo slides</td><td class="s-ok">Found</td></tr><tr><td>AI-Use Statement</td><td class="s-ok">Found</td></tr></tbody></table><b>Before your demo</b><ol><li>Minimum bar: at the demo, every Must FR must be clickable on the happy path.</li></ol><div class="gh"><b>Git hygiene</b><ul><li>Replace burmese_review_v2 to v5 and the _v1.1 SRS copy with one file each; history keeps old versions.</li></ul></div></div><div class="card" id="team-19" data-n="19"><h3>Group 19: Yhar Bid</h3><div class="meta">Demo Mon 16 Nov 13:05-13:17</div><table><thead><tr><th>M3 item</th><th style="width:30%">What we found</th></tr></thead><tbody><tr><td>Team Charter</td><td class="s-no">Not found</td></tr><tr><td>SRS</td><td class="s-ok">Found</td></tr><tr><td>Design + diagrams</td><td class="s-no">Not found</td></tr><tr><td>Clickable prototype</td><td class="s-pt">Partly</td></tr><tr><td>Final Report + Golden Thread</td><td class="s-pt">Partly</td></tr><tr><td>Repo + README</td><td class="s-pt">Partly</td></tr><tr><td>Demo slides</td><td class="s-no">Not found</td></tr><tr><td>AI-Use Statement</td><td class="s-pt">Partly</td></tr></tbody></table><b>Before your demo</b><ol><li>Add the Team Charter to docs/ (for example docs/M1-team-charter.pdf).</li><li>Add the design document and diagrams (use case, sequence, data model) to docs/design/.</li><li>Make sure the prototype covers every Must FR and that the submitted version is clear (one index.html).</li><li>Complete the Golden Thread table so every Must FR links to a diagram, a prototype page and a test. Missing table = score capped at 50%.</li><li>Improve the README: say exactly how to open the prototype and list members with GitHub accounts.</li><li>Add the demo slides to slides/ (PDF or a link in the README).</li><li>Complete the AI-Use Statement: tools, parts, prompts and how you checked the results.</li><li>Minimum bar: the prototype must open in a browser without installing or running a server. If it needs a build, publish it (GitHub Pages or similar) and put the link at the top of the README.</li><li>Minimum bar: at the demo, every Must FR must be clickable on the happy path.</li></ol></div><div class="card" id="team-20" data-n="20"><h3>Group 20: Home sick</h3><div class="meta">Demo Mon 16 Nov 13:17-13:29</div><table><thead><tr><th>M3 item</th><th style="width:30%">What we found</th></tr></thead><tbody><tr><td>Team Charter</td><td class="s-no">Not found</td></tr><tr><td>SRS</td><td class="s-ok">Found</td></tr><tr><td>Design + diagrams</td><td class="s-no">Not found</td></tr><tr><td>Clickable prototype</td><td class="s-pt">Partly</td></tr><tr><td>Final Report + Golden Thread</td><td class="s-ok">Found</td></tr><tr><td>Repo + README</td><td class="s-pt">Partly</td></tr><tr><td>Demo slides</td><td class="s-no">Not found</td></tr><tr><td>AI-Use Statement</td><td class="s-pt">Partly</td></tr></tbody></table><b>Before your demo</b><ol><li>Add the Team Charter to docs/ (for example docs/M1-team-charter.pdf).</li><li>Add the design document and diagrams (use case, sequence, data model) to docs/design/.</li><li>Make sure the prototype covers every Must FR and that the submitted version is clear (one index.html).</li><li>Add a README.md: system name, team members with student IDs and GitHub accounts, how to open the prototype, where the documents are.</li><li>Add the demo slides to slides/ (PDF or a link in the README).</li><li>Complete the AI-Use Statement: tools, parts, prompts and how you checked the results.</li><li>Minimum bar: check that the prototype opens by double-clicking prototype/index.html, or give a working link in the README.</li><li>Minimum bar: at the demo, every Must FR must be clickable on the happy path.</li></ol><div class="gh"><b>Git hygiene</b><ul><li>Keep one prototype file and delete draft v.1 to v6 copies; history keeps them.</li><li>Move files into folders and add a README.</li></ul></div></div><div class="card" id="team-21" data-n="21"><h3>Group 21: lumen Inc.</h3><div class="meta">Demo Mon 16 Nov 13:29-13:41</div><table><thead><tr><th>M3 item</th><th style="width:30%">What we found</th></tr></thead><tbody><tr><td>Team Charter</td><td class="s-ok">Found</td></tr><tr><td>SRS</td><td class="s-ok">Found</td></tr><tr><td>Design + diagrams</td><td class="s-ok">Found</td></tr><tr><td>Clickable prototype</td><td class="s-ok">Found</td></tr><tr><td>Final Report + Golden Thread</td><td class="s-ok">Found</td></tr><tr><td>Repo + README</td><td class="s-ok">Found</td></tr><tr><td>Demo slides</td><td class="s-ok">Found</td></tr><tr><td>AI-Use Statement</td><td class="s-ok">Found</td></tr></tbody></table><b>Before your demo</b><ol><li>Minimum bar: at the demo, every Must FR must be clickable on the happy path.</li></ol></div><div class="card" id="team-22" data-n="22"><h3>Group 22: Hallo world</h3><div class="meta">Demo Mon 16 Nov 13:41-13:53</div><table><thead><tr><th>M3 item</th><th style="width:30%">What we found</th></tr></thead><tbody><tr><td>Team Charter</td><td class="s-no">No repo</td></tr><tr><td>SRS</td><td class="s-no">No repo</td></tr><tr><td>Design + diagrams</td><td class="s-no">No repo</td></tr><tr><td>Clickable prototype</td><td class="s-no">No repo</td></tr><tr><td>Final Report + Golden Thread</td><td class="s-no">No repo</td></tr><tr><td>Repo + README</td><td class="s-no">No repo</td></tr><tr><td>Demo slides</td><td class="s-no">No repo</td></tr><tr><td>AI-Use Statement</td><td class="s-no">No repo</td></tr></tbody></table><b>Before your demo</b><ol><li>No repo link was submitted. Send your repo link before your demo.</li></ol></div><div class="card" id="team-23" data-n="23"><h3>Group 23: Trauma squad</h3><div class="meta">Demo Mon 16 Nov 13:53-14:05</div><table><thead><tr><th>M3 item</th><th style="width:30%">What we found</th></tr></thead><tbody><tr><td>Team Charter</td><td class="s-no">Not found</td></tr><tr><td>SRS</td><td class="s-pt">Partly</td></tr><tr><td>Design + diagrams</td><td class="s-no">Not found</td></tr><tr><td>Clickable prototype</td><td class="s-pt">Partly</td></tr><tr><td>Final Report + Golden Thread</td><td class="s-no">Not found</td></tr><tr><td>Repo + README</td><td class="s-pt">Partly</td></tr><tr><td>Demo slides</td><td class="s-pt">Partly</td></tr><tr><td>AI-Use Statement</td><td class="s-no">Not found</td></tr></tbody></table><b>Before your demo</b><ol><li>README, SRS, presentation and HTML are on other branches. Merge them into main; main has almost nothing.</li><li>Add the Team Charter to docs/ (for example docs/M1-team-charter.pdf).</li><li>Complete the SRS: every FR and NFR has an ID (FR-1, NFR-1) and the Must FRs are marked.</li><li>Add the design document and diagrams (use case, sequence, data model) to docs/design/.</li><li>Make sure the prototype covers every Must FR and that the submitted version is clear (one index.html).</li><li>Add the Final Report and the Golden Thread table (FR to design to prototype page to test), for example docs/final-report.md.</li><li>Add a README.md: system name, team members with student IDs and GitHub accounts, how to open the prototype, where the documents are.</li><li>Finish the demo slides and commit them.</li><li>Add the AI-Use Statement (docs/ai-use-statement.md): which AI tools, for which parts, and how you checked the output. Missing = score capped at 50%.</li><li>Minimum bar: the prototype must open in a browser without installing or running a server. If it needs a build, publish it (GitHub Pages or similar) and put the link at the top of the README.</li><li>Minimum bar: be ready to show which page implements which FR (label pages or list them in the Golden Thread table).</li><li>Minimum bar: at the demo, every Must FR must be clickable on the happy path.</li></ol><div class="gh"><b>Git hygiene</b><ul><li>Write meaningful commit messages instead of the default ones.</li></ul></div></div><div class="card" id="team-24" data-n="24"><h3>Group 24: team 24</h3><div class="meta">Demo Mon 16 Nov 14:05-14:17</div><table><thead><tr><th>M3 item</th><th style="width:30%">What we found</th></tr></thead><tbody><tr><td>Team Charter</td><td class="s-no">Not found</td></tr><tr><td>SRS</td><td class="s-no">Not found</td></tr><tr><td>Design + diagrams</td><td class="s-pt">Partly</td></tr><tr><td>Clickable prototype</td><td class="s-pt">Partly</td></tr><tr><td>Final Report + Golden Thread</td><td class="s-no">Not found</td></tr><tr><td>Repo + README</td><td class="s-ok">Found</td></tr><tr><td>Demo slides</td><td class="s-no">Not found</td></tr><tr><td>AI-Use Statement</td><td class="s-no">Not found</td></tr></tbody></table><b>Before your demo</b><ol><li>Add the Team Charter to docs/ (for example docs/M1-team-charter.pdf).</li><li>Add the SRS with numbered FR and NFR to docs/ (for example docs/M2-srs.pdf).</li><li>Complete the design: diagrams for the Must FRs, saved in docs/design/.</li><li>Make sure the prototype covers every Must FR and that the submitted version is clear (one index.html).</li><li>Add the Final Report and the Golden Thread table (FR to design to prototype page to test), for example docs/final-report.md.</li><li>Add the demo slides to slides/ (PDF or a link in the README).</li><li>Add the AI-Use Statement (docs/ai-use-statement.md): which AI tools, for which parts, and how you checked the output. Missing = score capped at 50%.</li><li>Minimum bar: the prototype must open in a browser without installing or running a server. If it needs a build, publish it (GitHub Pages or similar) and put the link at the top of the README.</li><li>Minimum bar: be ready to show which page implements which FR (label pages or list them in the Golden Thread table).</li><li>Minimum bar: at the demo, every Must FR must be clickable on the happy path.</li></ol></div><div class="card" id="team-25" data-n="25"><h3>Group 25: Team25</h3><div class="meta">Demo Mon 16 Nov 14:17-14:29</div><table><thead><tr><th>M3 item</th><th style="width:30%">What we found</th></tr></thead><tbody><tr><td>Team Charter</td><td class="s-ok">Found</td></tr><tr><td>SRS</td><td class="s-ok">Found</td></tr><tr><td>Design + diagrams</td><td class="s-ok">Found</td></tr><tr><td>Clickable prototype</td><td class="s-ok">Found</td></tr><tr><td>Final Report + Golden Thread</td><td class="s-ok">Found</td></tr><tr><td>Repo + README</td><td class="s-pt">Partly</td></tr><tr><td>Demo slides</td><td class="s-no">Not found</td></tr><tr><td>AI-Use Statement</td><td class="s-ok">Found</td></tr></tbody></table><b>Before your demo</b><ol><li>The prototype is a Figma link: put the link in the README and make sure it opens without asking for access.</li><li>Improve the README: say exactly how to open the prototype and list members with GitHub accounts.</li><li>Add the demo slides to slides/ (PDF or a link in the README).</li><li>Minimum bar: be ready to show which page implements which FR (label pages or list them in the Golden Thread table).</li><li>Minimum bar: at the demo, every Must FR must be clickable on the happy path.</li></ol><div class="gh"><b>Git hygiene</b><ul><li>Delete the (OLD) and (OLDEST) report copies; history keeps them.</li><li>Move files into docs/, prototype/ and slides/.</li></ul></div></div><div class="card" id="team-26" data-n="26"><h3>Group 26: The last one</h3><div class="meta">Demo Mon 16 Nov 14:29-14:41</div><table><thead><tr><th>M3 item</th><th style="width:30%">What we found</th></tr></thead><tbody><tr><td>Team Charter</td><td class="s-ok">Found</td></tr><tr><td>SRS</td><td class="s-ok">Found</td></tr><tr><td>Design + diagrams</td><td class="s-ok">Found</td></tr><tr><td>Clickable prototype</td><td class="s-ok">Found</td></tr><tr><td>Final Report + Golden Thread</td><td class="s-ok">Found</td></tr><tr><td>Repo + README</td><td class="s-ok">Found</td></tr><tr><td>Demo slides</td><td class="s-ok">Found</td></tr><tr><td>AI-Use Statement</td><td class="s-ok">Found</td></tr></tbody></table><b>Before your demo</b><ol><li>Minimum bar: be ready to show which page implements which FR (label pages or list them in the Golden Thread table).</li><li>Minimum bar: at the demo, every Must FR must be clickable on the happy path.</li></ol></div></div>
+</section>
+
+</main>
+<footer><div class="wrap">Intro2SE 15031001, Applied Digital Technology, Mae Fah Luang University. Semester 1/2569. File and folder names in sections 1 to 9 are illustrations.</div></footer>
+
+<script>
+(function(){var sel=document.getElementById('rvSel'),cards=[].slice.call(document.querySelectorAll('#rvCards .card'));
+function show(n){cards.forEach(function(c){c.classList.toggle('hidden',!!n&&c.dataset.n!==n)});document.getElementById('rvOverview').classList.toggle('hidden',!!n);sel.value=n||'';
+  try{localStorage.setItem('git-review-team',n||'')}catch(e){}}
+sel.onchange=function(){show(sel.value);if(sel.value)document.getElementById('review').scrollIntoView()};
+document.getElementById('rvAll').onclick=function(){show('')};
+[].slice.call(document.querySelectorAll('#rvOverview tr.go')).forEach(function(r){r.onclick=function(){show(r.dataset.n);document.getElementById('team-'+r.dataset.n).scrollIntoView()}});
+var h=(location.hash.match(/^#team-(\d+)$/)||[])[1],v='';try{v=localStorage.getItem('git-review-team')||''}catch(e){}
+show(h||v||'');})();
+</script>
+</body>
+</html>
